@@ -65,7 +65,7 @@ export default function HomeView({ initialProducts = [] }) {
       mostrarToast('Agrega productos a tu carrito primero');
       return;
     }
-    const telefono = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '573000000000';
+    const telefono = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '57 310 5801620';
     const lista = carrito.map((i) => `${i.nombre} (x${i.cantidad})`).join(', ');
     const texto = `Hola, quiero realizar el siguiente pedido: ${lista} - Total: $${totalPrecio.toLocaleString('es-CO')}`;
     window.open(`https://wa.me/${telefono}?text=${encodeURIComponent(texto)}`, '_blank');
