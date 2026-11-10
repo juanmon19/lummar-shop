@@ -1,17 +1,37 @@
-// pages/index.js - Punto de entrada principal (Front Controller -> Vista Tienda)
+// pages/index.js - Tienda pública
 import React from 'react';
 import HomeView from '../views/tienda/HomeView';
-import { ProductoModel } from '../models/ProductoModel';
+import { ProductoModel, PRODUCTOS_DEMO } from '../models/ProductoModel';
+import { isDbConfigured } from '../config/database';
 
-export default function IndexPage({ productos }) {
-  return <HomeView initialProducts={productos} />;
+export default function IndexPage({ productos, dbConfigurado, origen }) {
+  return (
+    <HomeView
+      initialProducts={productos}
+      dbConfigurado={dbConfigurado}
+      origen={origen}
+    />
+  );
 }
 
 export async function getServerSideProps() {
-  const productos = await ProductoModel.obtenerTodos();
-  return {
-    props: {
-      productos: JSON.parse(JSON.stringify(productos))
-    }
-  };
+  try {
+    const resultado = await ProductoModel.listar();
+    return {
+      props: {
+        productos: JSON.parse(JSON.stringify(resultado.productos)),
+        dbConfigurado: resultado.dbConfigurado,
+        origen: resultado.origen
+      }
+    };
+  } catch (error) {
+    console.error('[pages/index.js]', error);
+    return {
+      props: {
+        productos: JSON.parse(JSON.stringify(PRODUCTOS_DEMO)),
+        dbConfigurado: isDbConfigured(),
+        origen: 'demo'
+      }
+    };
+  }
 }

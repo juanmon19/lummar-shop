@@ -1,16 +1,23 @@
 // pages/admin.js - Ruta protegida de Administrador (/admin)
 import React from 'react';
 import AdminDashboardView from '../views/admin/AdminDashboardView';
-import { ProductoModel } from '../models/ProductoModel';
-import { getTokenFromRequest, verifySessionToken } from '../config/security';
+import { ProductoModel, PRODUCTOS_DEMO } from '../models/ProductoModel';
+import { getSessionFromRequest } from '../config/security';
+import { isDbConfigured } from '../config/database';
 
-export default function AdminPage({ adminUser, productos }) {
-  return <AdminDashboardView adminUser={adminUser} initialProducts={productos} />;
+export default function AdminPage({ adminUser, productos, dbConfigurado, dbError }) {
+  return (
+    <AdminDashboardView
+      adminUser={adminUser}
+      initialProducts={productos}
+      dbConfigurado={dbConfigurado}
+      dbError={dbError}
+    />
+  );
 }
 
 export async function getServerSideProps({ req }) {
-  const token = getTokenFromRequest(req);
-  const sesion = token ? await verifySessionToken(token) : null;
+  const sesion = await getSessionFromRequest(req);
 
   if (!sesion || sesion.rol !== 'admin') {
     return {
@@ -21,11 +28,28 @@ export async function getServerSideProps({ req }) {
     };
   }
 
-  const productos = await ProductoModel.obtenerTodos();
+  let productos = PRODUCTOS_DEMO;
+  let dbConfigurado = isDbConfigured();
+  let dbError = null;
+
+  try {
+    const resultado = await ProductoModel.listar({
+      incluirInactivos: true,
+      usarDemoSiFalla: false
+    });
+    productos = resultado.productos;
+    dbConfigurado = resultado.dbConfigurado;
+  } catch (error) {
+    console.error('[pages/admin.js]', error);
+    dbError = error.message;
+  }
+
   return {
     props: {
       adminUser: sesion,
-      productos: JSON.parse(JSON.stringify(productos))
+      productos: JSON.parse(JSON.stringify(productos)),
+      dbConfigurado,
+      dbError
     }
   };
 }

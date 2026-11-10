@@ -1,19 +1,96 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  overflow-x: hidden;
+  background-color: #fff8f0;
+  color: #1c1718;
+  -webkit-tap-highlight-color: transparent;
+}
+
+img {
+  max-width: 100%;
+}
+
+button,
+a,
+input,
+select,
+textarea {
+  -webkit-tap-highlight-color: transparent;
+}
+
+#catalogo {
+  scroll-margin-top: 92px;
+}
+
+/* Evita el zoom automático de iOS al enfocar formularios. */
+@media (max-width: 640px) {
+  input,
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}
+
+/* Scroll horizontal limpio para chips de categorías. */
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.pb-safe {
+  padding-bottom: calc(0.75rem + var(--safe-bottom));
+}
+
+.pb-safe-2 {
+  padding-bottom: calc(1.5rem + var(--safe-bottom));
+}
+
+/* Barra de desplazamiento elegante en escritorio. */
 ::-webkit-scrollbar {
   width: 8px;
+  height: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #FFF8F0;
+  background: #fff8f0;
 }
 ::-webkit-scrollbar-thumb {
-  background: #DFA6AF;
+  background: #dfa6af;
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #C99A3B;
+  background: #c99a3b;
+}
+
+:focus-visible {
+  outline: 2px solid #c99a3b;
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }
